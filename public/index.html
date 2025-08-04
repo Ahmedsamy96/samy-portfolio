@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ahmed Samy - Data Scientist Portfolio</title>
+    <title>Ahmed Samy - Senior Data Scientist Portfolio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,31 +13,87 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #000000 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
             color: white;
-            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Header Styles */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @keyframes slideLeft {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+
+        /* Header */
         .header {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #374151;
-            z-index: 50;
-            padding: 16px 0;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
         }
 
-        .header-content {
+        .header.scrolled {
+            padding: 0.5rem 0;
+            background: rgba(15, 15, 35, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,861 +102,1065 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 1rem;
         }
 
         .logo-circle {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(45deg, #2563eb, #7c3aed);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 1.2rem;
             font-weight: bold;
+            animation: glow 2s infinite;
         }
 
         .logo-text h1 {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .logo-text p {
-            font-size: 14px;
-            color: #9ca3af;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
         }
 
-        .nav {
+        .nav-menu {
             display: flex;
-            gap: 8px;
+            list-style: none;
+            gap: 2rem;
         }
 
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            border-radius: 8px;
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .nav-menu a:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background: #3b82f6;
             transition: all 0.3s ease;
         }
 
-        .nav-btn:hover {
-            color: white;
-            background: #374151;
+        .nav-menu a:hover::after {
+            width: 100%;
+            left: 0;
         }
 
-        .nav-btn.active {
-            background: linear-gradient(45deg, #2563eb, #7c3aed);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Main Content */
-        .main {
-            padding-top: 120px;
-            padding-bottom: 48px;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
         }
 
-        .section {
-            display: none;
-            animation: fadeIn 0.6s ease-out;
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            z-index: 1;
+            position: relative;
         }
 
-        .section.active {
+        .hero-content {
+            animation: slideIn 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #60a5fa, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #60a5fa;
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; max-height: 0; }
-            to { opacity: 1; max-height: 500px; }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            animation: fadeInUp 1s ease-out 0.8s both;
         }
 
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        /* Profile Section */
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
             align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
         }
 
-        .profile-title {
-            font-size: 48px;
-            font-weight: bold;
-            margin-bottom: 24px;
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .avatar-circle {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .avatar-inner {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 20px;
+            right: -20px;
+            background: #10b981;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
             background: linear-gradient(45deg, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .profile-desc {
-            font-size: 20px;
-            color: #d1d5db;
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: rgba(55, 65, 81, 0.5);
-            padding: 16px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #60a5fa;
-        }
-
-        .stat-label {
-            color: #9ca3af;
-            font-size: 14px;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 16px;
-        }
-
-        .btn-primary {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #2563eb;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-
-        .btn-secondary {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #374151;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-
-        .profile-visual {
+        /* Experience Section */
+        .experience-timeline {
             position: relative;
-            text-align: center;
+            margin: 2rem 0;
         }
 
-        .profile-circle {
-            width: 320px;
-            height: 320px;
-            background: linear-gradient(45deg, rgba(37, 99, 235, 0.2), rgba(124, 58, 237, 0.2));
+        .timeline-line {
+            position: absolute;
+            left: 2rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+        }
+
+        .experience-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 5rem;
+            opacity: 0;
+            animation: slideIn 0.6s ease-out forwards;
+        }
+
+        .experience-item:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .experience-item:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -3rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: #3b82f6;
             border-radius: 50%;
-            margin: 0 auto;
+            border: 3px solid #0f0f23;
+        }
+
+        .experience-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .experience-header {
+            margin-bottom: 1rem;
+        }
+
+        .experience-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-company {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .experience-desc {
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            background: rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Projects Slider */
+        .projects-slider {
             position: relative;
             overflow: hidden;
+            border-radius: 1rem;
+            margin: 2rem 0;
         }
 
-        .profile-inner {
-            position: absolute;
-            inset: 16px;
-            background: linear-gradient(45deg, #2563eb, #7c3aed);
-            border-radius: 50%;
+        .projects-track {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 120px;
+            transition: transform 0.5s ease;
         }
 
-        .available-badge {
-            position: absolute;
-            bottom: -16px;
-            right: -16px;
-            background: #10b981;
-            color: black;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        /* Projects Grid */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-        }
-
-        .project-card {
-            background: rgba(55, 65, 81, 0.5);
-            border-radius: 8px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .project-card:hover {
-            background: rgba(55, 65, 81, 0.7);
-            transform: scale(1.02);
+        .project-slide {
+            min-width: 100%;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .project-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 1rem;
         }
 
         .project-title {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: #60a5fa;
-            line-height: 1.3;
         }
 
         .project-category {
-            background: rgba(124, 58, 237, 0.2);
+            background: rgba(139, 92, 246, 0.2);
             color: #c4b5fd;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .project-location {
-            color: #9ca3af;
-            font-size: 14px;
-            margin-bottom: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
         }
 
         .project-desc {
-            color: #d1d5db;
-            font-size: 14px;
-            margin-bottom: 16px;
-            line-height: 1.5;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
         }
 
         .project-tools {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .tool-tag {
-            background: #374151;
-            color: #d1d5db;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
         }
 
-        .project-actions {
+        .slider-controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
         }
 
-        .view-details {
-            color: #60a5fa;
-            text-decoration: none;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .view-details:hover {
-            color: #93c5fd;
-        }
-
-        /* Experience Cards */
-        .experience-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .experience-card {
-            background: rgba(55, 65, 81, 0.5);
-            border-radius: 8px;
-            padding: 24px;
+        .slider-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .experience-card:hover {
-            background: rgba(55, 65, 81, 0.7);
+        .slider-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(1.1);
         }
 
-        .experience-header {
+        .slider-dots {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .experience-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #60a5fa;
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .experience-company {
-            font-size: 18px;
-            color: #d1d5db;
-            margin-top: 4px;
-        }
-
-        .experience-meta {
-            display: flex;
-            gap: 16px;
-            color: #9ca3af;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
-        .experience-details {
-            margin-top: 16px;
-            animation: slideDown 0.3s ease-out;
-            overflow: hidden;
-        }
-
-        .experience-desc {
-            color: #d1d5db;
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skill-tag {
-            background: rgba(124, 58, 237, 0.2);
-            color: #c4b5fd;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+        .dot.active {
+            background: #3b82f6;
+            transform: scale(1.2);
         }
 
         /* Skills Section */
-        .skills-filter {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 32px;
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            background: rgba(55, 65, 81, 0.5);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .filter-btn:hover {
-            color: white;
-            background: #374151;
-        }
-
-        .filter-btn.active {
-            background: #2563eb;
-            color: white;
-        }
-
         .skills-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
+            gap: 2rem;
+            margin: 2rem 0;
         }
 
         .skill-category {
-            background: rgba(55, 65, 81, 0.5);
-            border-radius: 8px;
-            padding: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
             transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
 
-        .skill-category.filtered {
-            opacity: 0.5;
-            transform: scale(0.95);
+        .skill-category:nth-child(1) { animation-delay: 0.1s; }
+        .skill-category:nth-child(2) { animation-delay: 0.2s; }
+        .skill-category:nth-child(3) { animation-delay: 0.3s; }
+        .skill-category:nth-child(4) { animation-delay: 0.4s; }
+
+        .skill-category:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .category-title {
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #60a5fa;
-            margin-bottom: 16px;
+            margin-bottom: 1.5rem;
             text-transform: capitalize;
-        }
-
-        .skill-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
 
         .skill-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1rem;
         }
 
         .skill-name {
-            color: #d1d5db;
+            color: #cbd5e1;
         }
 
         .skill-rating {
             display: flex;
-            gap: 4px;
+            gap: 0.2rem;
         }
 
         .rating-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #4b5563;
+            background: #374151;
+            transition: all 0.3s ease;
         }
 
         .rating-dot.filled {
             background: #60a5fa;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
         }
 
-        /* Modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+        /* Education Section */
+        .education-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .education-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .education-item:nth-child(even) {
+            animation-delay: 0.3s;
+        }
+
+        .education-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-item {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 16px;
-        }
-
-        .modal-content {
-            background: #374151;
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 800px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
 
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #60a5fa;
+        .achievement-icon {
+            color: #fbbf24;
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            font-size: 24px;
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            z-index: 1001;
+            transition: width 0.1s ease;
         }
 
-        .close-btn:hover {
-            color: white;
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f0f23;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
         }
 
-        .section-title {
-            font-size: 48px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 48px;
-            background: linear-gradient(45deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        /* Responsive */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .profile-grid {
+            .hero-container {
                 grid-template-columns: 1fr;
-                gap: 24px;
+                text-align: center;
             }
 
-            .profile-title {
-                font-size: 36px;
+            .hero-title {
+                font-size: 2.5rem;
             }
 
-            .stats-grid {
+            .hero-stats {
                 grid-template-columns: 1fr;
             }
 
-            .nav {
-                flex-wrap: wrap;
-            }
-
-            .nav-btn span {
+            .nav-menu {
                 display: none;
             }
 
-            .projects-grid {
+            .education-grid {
                 grid-template-columns: 1fr;
             }
 
-            .skills-grid {
-                grid-template-columns: 1fr;
+            .experience-item {
+                padding-left: 3rem;
             }
+
+            .timeline-dot {
+                left: -2rem;
+            }
+
+            .timeline-line {
+                left: 1.5rem;
+            }
+        }
+
+        /* File Upload Styles */
+        .file-upload {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .upload-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .upload-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Auto-scrolling text */
+        .scrolling-text {
+            overflow: hidden;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin: 2rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .scrolling-content {
+            display: inline-block;
+            animation: slideLeft 20s linear infinite;
+            color: #60a5fa;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress" class="scroll-progress"></div>
+
+    <!-- File Upload -->
+    <div class="file-upload">
+        <label for="file-input" class="upload-btn">📁 Upload Excel Data</label>
+        <input type="file" id="file-input" accept=".xlsx,.xls" />
+    </div>
+
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-circle">AS</div>
-                    <div class="logo-text">
-                        <h1>Ahmed Samy</h1>
-                        <p id="typed-text">Senior Data Scientist & AI Engineer</p>
-                    </div>
+    <header id="header" class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-circle">AS</div>
+                <div class="logo-text">
+                    <h1>Ahmed Samy</h1>
+                    <p id="typed-subtitle">Senior Data Scientist & AI Engineer</p>
                 </div>
-                <nav class="nav">
-                    <button class="nav-btn active" onclick="showSection('profile')">
-                        <span>👤</span>
-                        <span>Profile</span>
-                    </button>
-                    <button class="nav-btn" onclick="showSection('experience')">
-                        <span>💼</span>
-                        <span>Experience</span>
-                    </button>
-                    <button class="nav-btn" onclick="showSection('projects')">
-                        <span>💻</span>
-                        <span>Projects</span>
-                    </button>
-                    <button class="nav-btn" onclick="showSection('skills')">
-                        <span>⭐</span>
-                        <span>Skills</span>
-                    </button>
-                    <button class="nav-btn" onclick="showSection('education')">
-                        <span>📚</span>
-                        <span>Education</span>
-                    </button>
-                </nav>
             </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#education">Education</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        <div class="container">
-            <!-- Profile Section -->
-            <section id="profile" class="section active">
-                <div class="profile-grid">
-                    <div>
-                        <h2 class="profile-title">Data Science Expert</h2>
-                        <p class="profile-desc">
-                            Experienced Data Scientist with 5+ years of diverse industry experience and 6 years in the general Tech Market. 
-                            Skilled in creating data-intensive applications, overcoming scalability challenges, and implementing predictive modeling techniques.
-                        </p>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-number">8+</div>
-                                <div class="stat-label">Major Projects</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number">5+</div>
-                                <div class="stat-label">Years Experience</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-number">18</div>
-                                <div class="stat-label">AI/ML Models</div>
-                            </div>
-                        </div>
-                        <div class="cta-buttons">
-                            <a href="mailto:ahmed.samy18296@gmail.com" class="btn-primary">
-                                <span>✉️</span>
-                                <span>Contact Me</span>
-                            </a>
-                            <a href="https://github.com/Ahmedsamy96" class="btn-secondary" target="_blank">
-                                <span>🔗</span>
-                                <span>GitHub</span>
-                            </a>
-                        </div>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Data Science Expert</h1>
+                <p class="hero-subtitle">
+                    Experienced Data Scientist with 5+ years of diverse industry experience and 6 years in the general Tech Market. 
+                    Skilled in creating data-intensive applications, overcoming scalability challenges, and implementing predictive modeling techniques.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="stat-experience">5+</span>
+                        <span class="stat-label">Years Experience</span>
                     </div>
-                    <div class="profile-visual">
-                        <div class="profile-circle">
-                            <div class="profile-inner">
-                                👨‍💻
-                            </div>
-                        </div>
-                        <div class="available-badge">
-                            Available for hire
-                        </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="stat-projects">20+</span>
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="stat-models">18</span>
+                        <span class="stat-label">AI/ML Models</span>
                     </div>
                 </div>
-            </section>
-
-            <!-- Projects Section -->
-            <section id="projects" class="section">
-                <h2 class="section-title">Featured Projects</h2>
-                <div class="projects-grid" id="projects-container">
-                    <!-- Projects will be dynamically inserted here -->
+                <div class="hero-buttons">
+                    <a href="mailto:ahmed.samy18296@gmail.com" class="btn btn-primary">
+                        <span>✉️</span>
+                        Contact Me
+                    </a>
+                    <a href="https://github.com/Ahmedsamy96" class="btn btn-secondary" target="_blank">
+                        <span>🔗</span>
+                        GitHub
+                    </a>
                 </div>
-            </section>
-
-            <!-- Experience Section -->
-            <section id="experience" class="section">
-                <h2 class="section-title">Professional Experience</h2>
-                <div class="experience-list" id="experience-container">
-                    <!-- Experience will be dynamically inserted here -->
-                </div>
-            </section>
-
-            <!-- Skills Section -->
-            <section id="skills" class="section">
-                <h2 class="section-title">Technical Skills</h2>
-                <div class="skills-filter">
-                    <div class="filter-buttons">
-                        <button class="filter-btn active" onclick="filterSkills('all')">All</button>
-                        <button class="filter-btn" onclick="filterSkills('programming')">Programming</button>
-                        <button class="filter-btn" onclick="filterSkills('ml')">Machine Learning</button>
-                        <button class="filter-btn" onclick="filterSkills('tools')">Tools</button>
-                        <button class="filter-btn" onclick="filterSkills('cloud')">Cloud</button>
+            </div>
+            <div class="hero-visual">
+                <div class="avatar-container">
+                    <div class="avatar-circle">
+                      <!--  <div class="avatar-inner">👨‍💻</div>-->
+                      <img class="avatar-inner" src="/samy.jpg" alt="Profile Photo">
                     </div>
+                    <div class="status-badge">Available for hire</div>
                 </div>
-                <div class="skills-grid" id="skills-container">
-                    <!-- Skills will be dynamically inserted here -->
-                </div>
-            </section>
-
-            <!-- Education Section -->
-            <section id="education" class="section">
-                <h2 class="section-title">Education & Achievements</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-                    <div>
-                        <h3 style="font-size: 24px; font-weight: bold; color: #60a5fa; margin-bottom: 24px;">Education</h3>
-                        <div style="display: flex; flex-direction: column; gap: 24px;">
-                            <div class="stat-card" style="text-align: left;">
-                                <h4 style="font-size: 18px; font-weight: bold; color: white;">MSc in Artificial Intelligence</h4>
-                                <p style="color: #d1d5db;">FCI, Zagazig University</p>
-                                <p style="color: #9ca3af; font-size: 14px;">2022 - Present</p>
-                            </div>
-                            <div class="stat-card" style="text-align: left;">
-                                <h4 style="font-size: 18px; font-weight: bold; color: white;">AI/ML PRO Scholarship</h4>
-                                <p style="color: #d1d5db;">Information Technology Institute (ITI) & EPITA</p>
-                                <p style="color: #9ca3af; font-size: 14px;">Apr 2021 - Dec 2021</p>
-                            </div>
-                            <div class="stat-card" style="text-align: left;">
-                                <h4 style="font-size: 18px; font-weight: bold; color: white;">BSc in Computer Science & IT</h4>
-                                <p style="color: #d1d5db;">FCI, Zagazig University</p>
-                                <p style="color: #9ca3af; font-size: 14px;">2014 - 2018 (Grade: Good)</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 style="font-size: 24px; font-weight: bold; color: #a78bfa; margin-bottom: 24px;">Achievements</h3>
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
-                            <div class="stat-card" style="text-align: left; display: flex; align-items: flex-start; gap: 12px;">
-                                <span style="color: #fbbf24; margin-top: 4px;">🏆</span>
-                                <p style="color: #d1d5db; font-size: 14px;">Secured first place in the LabLab Hackathon by implementing GAIA for an AI-powered tourism website in Saudi Arabia</p>
-                            </div>
-                            <div class="stat-card" style="text-align: left; display: flex; align-items: flex-start; gap: 12px;">
-                                <span style="color: #fbbf24; margin-top: 4px;">🏆</span>
-                                <p style="color: #d1d5db; font-size: 14px;">Dataiku Master Certified - Certified in all tracks of Dataiku platform</p>
-                            </div>
-                            <div class="stat-card" style="text-align: left; display: flex; align-items: flex-start; gap: 12px;">
-                                <span style="color: #fbbf24; margin-top: 4px;">🏆</span>
-                                <p style="color: #d1d5db; font-size: 14px;">Machine Learning Engineering for Production (MLOPS) - Coursera</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
         </div>
-    </main>
+    </section>
 
-    <!-- Modal -->
-    <div id="modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">Project Details</h3>
-                <button class="close-btn" onclick="closeModal()">×</button>
-            </div>
-            <div id="modal-body">
-                <!-- Modal content will be dynamically inserted here -->
-            </div>
+    <!-- Auto-scrolling Text -->
+    <div class="scrolling-text">
+        <div class="scrolling-content">
+            🚀 Machine Learning • Deep Learning • NLP • Computer Vision • Data Analytics • AI Solutions • MLOps • Big Data • Python • TensorFlow • PyTorch • AWS • Azure • 🚀
         </div>
     </div>
 
+    <!-- Experience Section -->
+    <section id="experience" class="section">
+        <h2 class="section-title">Professional Experience</h2>
+        <div class="experience-timeline">
+            <div class="timeline-line"></div>
+            <div id="experience-container">
+                <!-- Experience items will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-slider">
+            <div id="projects-track" class="projects-track">
+                <!-- Project slides will be loaded here -->
+            </div>
+        </div>
+        <div class="slider-controls">
+            <button id="prev-btn" class="slider-btn">❮</button>
+            <button id="next-btn" class="slider-btn">❯</button>
+        </div>
+        <div id="slider-dots" class="slider-dots">
+            <!-- Dots will be generated here -->
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <h2 class="section-title">Technical Skills</h2>
+        <div id="skills-container" class="skills-grid">
+            <!-- Skills will be loaded here -->
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section">
+        <h2 class="section-title">Education & Achievements</h2>
+        <div class="education-grid">
+            <div>
+                <h3 style="font-size: 2rem; font-weight: 700; color: #60a5fa; margin-bottom: 2rem;">Education</h3>
+                <div id="education-container">
+                    <!-- Education items will be loaded here -->
+                </div>
+            </div>
+            <div>
+                <h3 style="font-size: 2rem; font-weight: 700; color: #a78bfa; margin-bottom: 2rem;">Achievements</h3>
+                <div id="achievements-container">
+                    <!-- Achievements will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script>
-        // Data
-        const projects = [
-            {
-                id: 1,
-                title: "Visual Pollution Detection (Visual Distortions)",
-                location: "Saudi Arabia",
-                tools: ["Yolov8", "SQL Server DB", "Streamlit", "Flask", "LabelImg", "NVIDIA GPUs"],
-                description: "Developed a comprehensive CV model to detect visual pollution objects in urban environments, integrated with real-time database storage and accessible through web and mobile applications.",
-                category: "Computer Vision",
+        // Default data (will be replaced when Excel is uploaded)
+        let portfolioData = {
+            personal: {
+                name: "Ahmed Samy",
+                title: "Senior Data Scientist & AI Engineer",
+                email: "ahmed.samy18296@gmail.com",
                 github: "https://github.com/Ahmedsamy96",
-                features: ["Real-time object detection", "Database integration", "Multi-platform accessibility", "GPU optimization"]
+                linkedin: "https://linkedin.com/in/ahmed-samy-datascientist",
+                experience_years: "5+",
+                projects_count: "20+",
+                models_count: "18"
             },
-            {
-                id: 2,
-                title: "Arabic Dialect Recognition System",
-                tools: ["NLP", "LSTM", "Naïve Bayes", "Flask", "NLTK", "Python", "Deep Learning"],
-                description: "Advanced NLP system that predicts Arabic dialects from text input across 18 different dialect classes. Implemented both traditional ML (Naïve Bayes) and deep learning (LSTM) approaches with web deployment.",
-                category: "NLP",
-                github: "https://github.com/Ahmedsamy96/Arabic-Dialects-Detector",
-                features: ["Multi-dialect classification", "Traditional ML & DL models", "Web service deployment", "Large-scale data processing"]
+            experiences: [
+                {
+                    title: "Senior Data Scientist",
+                    company: "CODE81 | Ghobash Group",
+                    period: "June 2024 - Present",
+                    location: "United Arab Emirates",
+                    type: "Full-time | Remote",
+                    description: "Translate business visions into data-driven products by leading the design, development, and deployment of AI solutions. Collaborate with sales teams to deliver impactful, scalable solutions through machine learning and analytics platforms.",
+                    skills: ["AI Solutions", "Machine Learning", "Analytics", "Business Strategy"]
+                },
+                {
+                    title: "Senior Data Scientist",
+                    company: "Etisalat e& (UAE)",
+                    period: "Jan 2024 - June 2024",
+                    location: "UAE",
+                    type: "Full-time | Remote",
+                    description: "Utilizes advanced data science methodologies to spearhead innovative initiatives focused on optimizing B2C operations within the organization like Customer Segmentation, Offer Specification, Credit Facility Modeling, and Fraud Detection.",
+                    skills: ["Customer Segmentation", "Fraud Detection", "Credit Modeling", "B2C Analytics"]
+                },
+                {
+                    title: "Data Science Instructor",
+                    company: "National Tele Institute",
+                    period: "DEC 2022 - Present",
+                    location: "New Admin Capital, Egypt",
+                    type: "Part-time",
+                    description: "Teaching postgraduate students data flow in machine learning and data science projects, covering all stages and implementation of different projects with a variety of use cases. (Finished 3 Rounds)",
+                    skills: ["Teaching", "Machine Learning", "Data Science", "Project Management"]
+                },
+                {
+                    title: "Data Scientist",
+                    company: "Austin Artificial Intelligence, Inc.",
+                    period: "May 2023 - Jan 2024",
+                    location: "Lakeway, TX, USA",
+                    type: "Full-Time | Remote",
+                    description: "Specialized in DS and NLP tasks, contributing to the productization of data sourced for major clients across the US, specializing in fields like real estate, stock market, and KPIs analytics.",
+                    skills: ["NLP", "Real Estate Analytics", "Stock Market Analysis", "KPIs"]
+                }
+            ],
+            projects: [
+                {
+                    title: "Visual Pollution Detection (Visual Distortions)",
+                    location: "Saudi Arabia",
+                    category: "Computer Vision",
+                    description: "Developed a comprehensive CV model to detect visual pollution objects in urban environments, integrated with real-time database storage and accessible through web and mobile applications.",
+                    tools: ["Yolov8", "SQL Server DB", "Streamlit", "Flask", "LabelImg", "NVIDIA GPUs"],
+                    github: "https://github.com/Ahmedsamy96",
+                    features: ["Real-time object detection", "Database integration", "Multi-platform accessibility", "GPU optimization"]
+                },
+                {
+                    title: "Arabic Dialect Recognition System",
+                    category: "NLP",
+                    description: "Advanced NLP system that predicts Arabic dialects from text input across 18 different dialect classes. Implemented both traditional ML (Naïve Bayes) and deep learning (LSTM) approaches with web deployment.",
+                    tools: ["NLP", "LSTM", "Naïve Bayes", "Flask", "NLTK", "Python", "Deep Learning"],
+                    github: "https://github.com/Ahmedsamy96/Arabic-Dialects-Detector",
+                    features: ["Multi-dialect classification", "Traditional ML & DL models", "Web service deployment", "Large-scale data processing"]
+                },
+                {
+                    title: "GAIA - AI Tourism Assistant",
+                    location: "Saudi Arabia",
+                    category: "AI Integration",
+                    description: "🏆 Award-winning AI-powered tourism platform that secured first place in LabLab Hackathon. Integrates NLP and image recognition to assist tourists with personalized travel planning and recommendations.",
+                    tools: ["NLP", "Computer Vision", "AI Integration", "Tourism APIs", "Machine Learning"],
+                    award: "🏆 First Place Winner",
+                    features: ["Multi-modal AI", "Tourism recommendation", "Image recognition", "Natural language processing"]
+                },
+                {
+                    title: "Cairo Demographic Center (CDC)",
+                    category: "Analytics",
+                    description: "Large-scale demographic analysis platform processing governmental data sources to provide statistical insights and predictive analytics for policy decision-making.",
+                    tools: ["ETL", "Apache Spark", "Python", "Apache Airflow", "Tableau", "Time-series Analysis"],
+                    features: ["Big data processing", "Government data integration", "Predictive modeling", "Interactive dashboards"]
+                },
+                {
+                    title: "Customized AI Chatbot (Digital Egypt - EEHC)",
+                    category: "NLP",
+                    description: "State-of-the-art conversational AI system utilizing advanced prompt engineering and RAG architecture. Fine-tuned Large Language Models with custom embeddings for domain-specific responses.",
+                    tools: ["LLM Fine Tuning", "Facebook's FastText Embedding", "Flask", "Ngrok", "Streamlit", "Llama2", "Langchain", "VectorDB", "RAG"],
+                    features: ["LLM fine-tuning", "RAG implementation", "Custom embeddings", "Production deployment"]
+                }
+            ],
+            skills: {
+                programming: [
+                    { name: "Python", rating: 5 },
+                    { name: "Java", rating: 4 },
+                    { name: "SQL", rating: 5 },
+                    { name: "JavaScript", rating: 4 }
+                ],
+                ml: [
+                    { name: "Machine Learning", rating: 5 },
+                    { name: "Deep Learning", rating: 5 },
+                    { name: "NLP", rating: 5 },
+                    { name: "Computer Vision", rating: 4 },
+                    { name: "MLOps", rating: 4 }
+                ],
+                tools: [
+                    { name: "Apache Spark", rating: 4 },
+                    { name: "Kafka", rating: 4 },
+                    { name: "Docker", rating: 4 },
+                    { name: "Tableau", rating: 5 },
+                    { name: "Streamlit", rating: 5 },
+                    { name: "Flask", rating: 5 }
+                ],
+                cloud: [
+                    { name: "AWS", rating: 4 },
+                    { name: "Azure", rating: 4 },
+                    { name: "MongoDB", rating: 4 },
+                    { name: "PostgreSQL", rating: 5 }
+                ]
             },
-            {
-                id: 3,
-                title: "GAIA - AI Tourism Assistant",
-                location: "Saudi Arabia",
-                tools: ["NLP", "Computer Vision", "AI Integration", "Tourism APIs", "Machine Learning"],
-                description: "🏆 Award-winning AI-powered tourism platform that secured first place in LabLab Hackathon. Integrates NLP and image recognition to assist tourists with personalized travel planning and recommendations.",
-                category: "AI Integration",
-                features: ["Multi-modal AI", "Tourism recommendation", "Image recognition", "Natural language processing"],
-                award: "🏆 First Place Winner"
-            },
-            {
-                id: 4,
-                title: "Cairo Demographic Center (CDC)",
-                tools: ["ETL", "Apache Spark", "Python", "Apache Airflow", "Tableau", "Time-series Analysis"],
-                description: "Large-scale demographic analysis platform processing governmental data sources to provide statistical insights and predictive analytics for policy decision-making.",
-                category: "Analytics",
-                features: ["Big data processing", "Government data integration", "Predictive modeling", "Interactive dashboards"]
-            }
-        ];
-
-        const experiences = [
-            {
-                id: 1,
-                title: "Senior Data Scientist",
-                company: "CODE81 | Ghobash Group",
-                period: "June 2024 - Present",
-                location: "United Arab Emirates",
-                description: "Translate business visions into data-driven products by leading the design, development, and deployment of AI solutions. Collaborate with sales teams to deliver impactful, scalable solutions through machine learning and analytics platforms.",
-                skills: ["AI Solutions", "Machine Learning", "Analytics", "Business Strategy"]
-            },
-            {
-                id: 2,
-                title: "Senior Data Scientist",
-                company: "Etisalat e& (UAE)",
-                period: "Jan 2024 - June 2024",
-                location: "UAE",
-                description: "Utilizes advanced data science methodologies to spearhead innovative initiatives focused on optimizing B2C operations within the organization like Customer Segmentation, Offer Specification, Credit Facility Modeling, and Fraud Detection.",
-                skills: ["Customer Segmentation", "Fraud Detection", "Credit Modeling", "B2C Analytics"]
-            },
-            {
-                id: 3,
-                title: "Data Science Instructor",
-                company: "National Tele Institute",
-                period: "DEC 2022 - Present",
-                location: "New Admin Capital, Egypt",
-                description: "Teaching postgraduate students data flow in machine learning and data science projects, covering all stages and implementation of different projects with a variety of use cases. (Finished 3 Rounds)",
-                skills: ["Teaching", "Machine Learning", "Data Science", "Project Management"]
-            },
-            {
-                id: 4,
-                title: "Data Scientist",
-                company: "Austin Artificial Intelligence, Inc.",
-                period: "May 2023 - Jan 2024",
-                location: "Lakeway, TX, USA",
-                description: "Specialized in DS and NLP tasks, contributing to the productization of data sourced for major clients across the US, specializing in fields like real estate, stock market, and KPIs analytics.",
-                skills: ["NLP", "Real Estate Analytics", "Stock Market Analysis", "KPIs"]
-            }
-        ];
-
-        const skills = {
-            programming: ["Python", "Java", "SQL", "JavaScript"],
-            ml: ["Machine Learning", "Deep Learning", "NLP", "Computer Vision", "MLOps"],
-            tools: ["Apache Spark", "Kafka", "Docker", "Tableau", "Streamlit", "Flask"],
-            cloud: ["AWS", "Azure", "MongoDB", "PostgreSQL"]
+            education: [
+                {
+                    degree: "MSc in Artificial Intelligence",
+                    institution: "FCI, Zagazig University",
+                    period: "2022 - Present",
+                    type: "Master's Degree"
+                },
+                {
+                    degree: "AI/ML PRO Scholarship",
+                    institution: "Information Technology Institute (ITI) & EPITA",
+                    period: "Apr 2021 - Dec 2021",
+                    type: "Professional Certificate"
+                },
+                {
+                    degree: "BSc in Computer Science & IT",
+                    institution: "FCI, Zagazig University",
+                    period: "2014 - 2018 (Grade: Good)",
+                    type: "Bachelor's Degree"
+                }
+            ],
+            achievements: [
+                "Secured first place in the LabLab Hackathon by implementing GAIA for an AI-powered tourism website in Saudi Arabia",
+                "Dataiku Master Certified - Certified in all tracks of Dataiku platform",
+                "Machine Learning Engineering for Production (MLOPS) - Coursera",
+                "Deep Learning Specialization - Coursera (Andrew Ng)",
+                "Presenting online introductory lectures on AI & Data Science to universities"
+            ]
         };
 
-        let currentSkillFilter = 'all';
-        let expandedExperience = null;
+        // Global variables
+        let currentProjectIndex = 0;
+        let autoSlideInterval;
 
-        // Initialize the page
-        function init() {
+        // Initialize the portfolio
+        function initPortfolio() {
+            updatePersonalInfo();
+            renderExperiences();
             renderProjects();
-            renderExperience();
             renderSkills();
+            renderEducation();
+            renderAchievements();
+            startAutoSlider();
+            initScrollEffects();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
         }
 
-        // Section navigation
-        function showSection(sectionName) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
+        // Update personal information
+        function updatePersonalInfo() {
+            const data = portfolioData.personal;
+            document.getElementById('stat-experience').textContent = data.experience_years;
+            document.getElementById('stat-projects').textContent = data.projects_count;
+            document.getElementById('stat-models').textContent = data.models_count;
+        }
 
-            // Show selected section
-            document.getElementById(sectionName).classList.add('active');
-
-            // Update navigation
-            const navButtons = document.querySelectorAll('.nav-btn');
-            navButtons.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.closest('.nav-btn').classList.add('active');
+        // Render experiences
+        function renderExperiences() {
+            const container = document.getElementById('experience-container');
+            const experiences = portfolioData.experiences;
+            
+            container.innerHTML = experiences.map(exp => `
+                <div class="experience-item">
+                    <div class="timeline-dot"></div>
+                    <div class="experience-card">
+                        <div class="experience-header">
+                            <h3 class="experience-title">${exp.title}</h3>
+                            <p class="experience-company">${exp.company}</p>
+                            <div class="experience-meta">
+                                <span>📅 ${exp.period}</span>
+                                <span>📍 ${exp.location}</span>
+                                <span>💼 ${exp.type}</span>
+                            </div>
+                        </div>
+                        <p class="experience-desc">${exp.description}</p>
+                        <div class="skill-tags">
+                            ${exp.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Render projects
         function renderProjects() {
-            const container = document.getElementById('projects-container');
-            const projectsHTML = projects.map(project => `
-                <div class="project-card" onclick="openProjectModal(${project.id})">
+            const track = document.getElementById('projects-track');
+            const dotsContainer = document.getElementById('slider-dots');
+            const projects = portfolioData.projects;
+            
+            track.innerHTML = projects.map(project => `
+                <div class="project-slide">
                     <div class="project-header">
                         <h3 class="project-title">${project.title}</h3>
                         <div>
@@ -907,166 +1168,252 @@
                             ${project.award ? `<br><span style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-top: 4px; display: inline-block;">${project.award}</span>` : ''}
                         </div>
                     </div>
-                    ${project.location ? `<p class="project-location">📍 ${project.location}</p>` : ''}
+                    ${project.location ? `<p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">📍 ${project.location}</p>` : ''}
                     <p class="project-desc">${project.description}</p>
                     <div class="project-tools">
-                        ${project.tools.slice(0, 3).map(tool => `<span class="tool-tag">${tool}</span>`).join('')}
-                        ${project.tools.length > 3 ? `<span class="tool-tag" style="background: rgba(37, 99, 235, 0.2); color: #60a5fa;">+${project.tools.length - 3} more</span>` : ''}
+                        ${project.tools.map(tool => `<span class="tool-tag">${tool}</span>`).join('')}
                     </div>
-                    <div class="project-actions">
-                        <a href="#" class="view-details">View Details →</a>
-                        ${project.github ? `<a href="${project.github}" target="_blank" style="color: #9ca3af; text-decoration: none;">🔗 GitHub</a>` : ''}
-                    </div>
+                    ${project.github ? `<a href="${project.github}" target="_blank" style="color: #60a5fa; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">🔗 View on GitHub</a>` : ''}
                 </div>
             `).join('');
-            container.innerHTML = projectsHTML;
-        }
-
-        // Render experience
-        function renderExperience() {
-            const container = document.getElementById('experience-container');
-            const experienceHTML = experiences.map(exp => `
-                <div class="experience-card" onclick="toggleExperience(${exp.id})">
-                    <div class="experience-header">
-                        <div>
-                            <h3 class="experience-title">${exp.title}</h3>
-                            <p class="experience-company">${exp.company}</p>
-                            <div class="experience-meta">
-                                <span>📅 ${exp.period}</span>
-                                <span>📍 ${exp.location}</span>
-                            </div>
-                        </div>
-                        <span style="font-size: 24px; color: #9ca3af;">${expandedExperience === exp.id ? '⌄' : '→'}</span>
-                    </div>
-                    ${expandedExperience === exp.id ? `
-                        <div class="experience-details">
-                            <p class="experience-desc">${exp.description}</p>
-                            <div class="skill-tags">
-                                ${exp.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-            container.innerHTML = experienceHTML;
-        }
-
-        // Toggle experience details
-        function toggleExperience(id) {
-            expandedExperience = expandedExperience === id ? null : id;
-            renderExperience();
+            
+            // Generate dots
+            dotsContainer.innerHTML = projects.map((_, index) => 
+                `<div class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>`
+            ).join('');
         }
 
         // Render skills
         function renderSkills() {
             const container = document.getElementById('skills-container');
-            const skillsHTML = Object.entries(skills).map(([category, skillList]) => `
-                <div class="skill-category ${currentSkillFilter !== 'all' && currentSkillFilter !== category ? 'filtered' : ''}">
+            const skills = portfolioData.skills;
+            
+            container.innerHTML = Object.entries(skills).map(([category, skillList]) => `
+                <div class="skill-category">
                     <h3 class="category-title">${category === 'ml' ? 'Machine Learning' : category}</h3>
                     <div class="skill-list">
                         ${skillList.map(skill => `
                             <div class="skill-item">
-                                <span class="skill-name">${skill}</span>
+                                <span class="skill-name">${skill.name}</span>
                                 <div class="skill-rating">
-                                    ${[...Array(5)].map((_, i) => `<div class="rating-dot ${i < 4 ? 'filled' : ''}"></div>`).join('')}
+                                    ${[...Array(5)].map((_, i) => 
+                                        `<div class="rating-dot ${i < skill.rating ? 'filled' : ''}"></div>`
+                                    ).join('')}
                                 </div>
                             </div>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
-            container.innerHTML = skillsHTML;
         }
 
-        // Filter skills
-        function filterSkills(filter) {
-            currentSkillFilter = filter;
+        // Render education
+        function renderEducation() {
+            const container = document.getElementById('education-container');
+            const education = portfolioData.education;
             
-            // Update filter buttons
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => {
-                btn.classList.remove('active');
+            container.innerHTML = education.map(edu => `
+                <div class="education-item">
+                    <h4 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">${edu.degree}</h4>
+                    <p style="color: #cbd5e1; margin-bottom: 0.5rem;">${edu.institution}</p>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">${edu.period}</p>
+                </div>
+            `).join('');
+        }
+
+        // Render achievements
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+            const achievements = portfolioData.achievements;
+            
+            container.innerHTML = achievements.map(achievement => `
+                <div class="achievement-item">
+                    <div class="achievement-icon">🏆</div>
+                    <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5;">${achievement}</p>
+                </div>
+            `).join('');
+        }
+
+        // Project slider functions
+        function nextSlide() {
+            currentProjectIndex = (currentProjectIndex + 1) % portfolioData.projects.length;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            currentProjectIndex = (currentProjectIndex - 1 + portfolioData.projects.length) % portfolioData.projects.length;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            currentProjectIndex = index;
+            updateSlider();
+            resetAutoSlider();
+        }
+
+        function updateSlider() {
+            const track = document.getElementById('projects-track');
+            const dots = document.querySelectorAll('.dot');
+            
+            track.style.transform = `translateX(-${currentProjectIndex * 100}%)`;
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentProjectIndex);
             });
-            event.target.classList.add('active');
-            
-            renderSkills();
         }
 
-        // Modal functions
-        function openProjectModal(projectId) {
-            const project = projects.find(p => p.id === projectId);
-            const modal = document.getElementById('modal');
-            const title = document.getElementById('modal-title');
-            const body = document.getElementById('modal-body');
-            
-            title.textContent = project.title;
-            body.innerHTML = `
-                ${project.award ? `<div style="margin-bottom: 16px;"><span style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; padding: 8px 16px; border-radius: 20px; font-size: 14px;">${project.award}</span></div>` : ''}
-                <div style="margin-bottom: 24px;">
-                    <h4 style="color: #d1d5db; font-size: 18px; margin-bottom: 8px;">Project Overview</h4>
-                    <p style="color: #d1d5db; line-height: 1.6;">${project.description}</p>
-                </div>
-                ${project.features ? `
-                    <div style="margin-bottom: 24px;">
-                        <h4 style="color: #10b981; font-size: 18px; margin-bottom: 12px;">Key Features</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            ${project.features.map(feature => `
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
-                                    <span style="color: #d1d5db; font-size: 14px;">${feature}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-                <div style="margin-bottom: 24px;">
-                    <h4 style="color: #a78bfa; font-size: 18px; margin-bottom: 12px;">Technologies & Tools</h4>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        ${project.tools.map(tool => `<span style="background: #374151; color: #d1d5db; padding: 6px 12px; border-radius: 20px; font-size: 14px;">${tool}</span>`).join('')}
-                    </div>
-                </div>
-                ${project.github ? `
-                    <div style="text-align: right;">
-                        <a href="${project.github}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #374151; color: white; padding: 12px 16px; border-radius: 8px; text-decoration: none; transition: background 0.3s ease;" onmouseover="this.style.background='#4b5563'" onmouseout="this.style.background='#374151'">
-                            <span>🔗</span>
-                            <span>View on GitHub</span>
-                        </a>
-                    </div>
-                ` : ''}
-            `;
-            
-            modal.style.display = 'flex';
+        function startAutoSlider() {
+            autoSlideInterval = setInterval(nextSlide, 5000);
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+        function resetAutoSlider() {
+            clearInterval(autoSlideInterval);
+            startAutoSlider();
         }
 
-        // Close modal when clicking outside
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+        // Scroll effects
+        function initScrollEffects() {
+            const header = document.getElementById('header');
+            const progressBar = document.getElementById('scroll-progress');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                
+                // Update progress bar
+                progressBar.style.width = scrollPercent + '%';
+                
+                // Update header
+                if (scrollTop > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Excel file upload and processing
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        processExcelData(workbook);
+                        alert('Portfolio data updated successfully!');
+                    } catch (error) {
+                        console.error('Error processing Excel file:', error);
+                        alert('Error processing Excel file. Please check the format.');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
             }
         });
 
-        // Initialize when page loads
-        window.addEventListener('load', init);
+        function processExcelData(workbook) {
+            try {
+                // Process Personal Info
+                if (workbook.SheetNames.includes('Personal')) {
+                    const personalSheet = workbook.Sheets['Personal'];
+                    const personalData = XLSX.utils.sheet_to_json(personalSheet);
+                    if (personalData.length > 0) {
+                        portfolioData.personal = personalData[0];
+                    }
+                }
 
-        // Typing animation for the header
-        let typedIndex = 0;
-        const fullText = "Senior Data Scientist & AI Engineer";
-        function typeText() {
-            if (typedIndex < fullText.length) {
-                document.getElementById('typed-text').textContent = fullText.slice(0, typedIndex + 1) + '|';
-                typedIndex++;
-                setTimeout(typeText, 100);
-            } else {
-                document.getElementById('typed-text').textContent = fullText;
+                // Process Experience
+                if (workbook.SheetNames.includes('Experience')) {
+                    const expSheet = workbook.Sheets['Experience'];
+                    const expData = XLSX.utils.sheet_to_json(expSheet);
+                    portfolioData.experiences = expData.map(exp => ({
+                        ...exp,
+                        skills: exp.skills ? exp.skills.split(',').map(s => s.trim()) : []
+                    }));
+                }
+
+                // Process Projects
+                if (workbook.SheetNames.includes('Projects')) {
+                    const projSheet = workbook.Sheets['Projects'];
+                    const projData = XLSX.utils.sheet_to_json(projSheet);
+                    portfolioData.projects = projData.map(proj => ({
+                        ...proj,
+                        tools: proj.tools ? proj.tools.split(',').map(t => t.trim()) : [],
+                        features: proj.features ? proj.features.split(',').map(f => f.trim()) : []
+                    }));
+                }
+
+                // Process Skills
+                if (workbook.SheetNames.includes('Skills')) {
+                    const skillsSheet = workbook.Sheets['Skills'];
+                    const skillsData = XLSX.utils.sheet_to_json(skillsSheet);
+                    portfolioData.skills = {
+                        programming: skillsData.filter(s => s.category === 'programming'),
+                        ml: skillsData.filter(s => s.category === 'ml'),
+                        tools: skillsData.filter(s => s.category === 'tools'),
+                        cloud: skillsData.filter(s => s.category === 'cloud')
+                    };
+                }
+
+                // Process Education
+                if (workbook.SheetNames.includes('Education')) {
+                    const eduSheet = workbook.Sheets['Education'];
+                    portfolioData.education = XLSX.utils.sheet_to_json(eduSheet);
+                }
+
+                // Process Achievements
+                if (workbook.SheetNames.includes('Achievements')) {
+                    const achSheet = workbook.Sheets['Achievements'];
+                    const achData = XLSX.utils.sheet_to_json(achSheet);
+                    portfolioData.achievements = achData.map(a => a.achievement);
+                }
+
+                // Re-render all sections
+                initPortfolio();
+                
+            } catch (error) {
+                console.error('Error processing Excel data:', error);
             }
         }
-        
-        // Start typing animation after a short delay
-        setTimeout(typeText, 1000);
+
+        // Event listeners
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            prevSlide();
+            resetAutoSlider();
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            nextSlide();
+            resetAutoSlider();
+        });
+
+        // Initialize portfolio when page loads
+        window.addEventListener('load', initPortfolio);
+
+        // Pause auto-slider when user hovers over projects section
+        document.getElementById('projects').addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+        });
+
+        document.getElementById('projects').addEventListener('mouseleave', () => {
+            startAutoSlider();
+        });
     </script>
 </body>
 </html>
